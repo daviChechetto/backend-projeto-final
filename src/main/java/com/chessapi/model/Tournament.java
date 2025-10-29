@@ -32,7 +32,7 @@ public class Tournament {
         this.endDate = end;
     }
 
-    // getters & setters
+    // getters e setters
     public UUID getId() { return id; }
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }

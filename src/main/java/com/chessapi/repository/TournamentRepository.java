@@ -1,4 +1,9 @@
 package com.chessapi.repository;
 
-public class TournamentRepository {
+import com.chessapi.model.Tournament;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface TournamentRepository extends JpaRepository<Tournament, Long> {
 }
