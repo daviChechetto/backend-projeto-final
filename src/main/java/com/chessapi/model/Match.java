@@ -23,7 +23,7 @@ public class Match {
 
     @ManyToOne
     @JoinColumn(name = "winner_id")
-    private Player winnerId; // null em caso de empate ou se o jogo ainda está em andamento
+    private Player winner; // null em caso de empate ou se o jogo ainda está em andamento
 
     private String result; // "white", "black", "draw", "ongoing"
 
@@ -52,8 +52,8 @@ public class Match {
     public void setPlayerWhite(Player playerWhite) { this.playerWhite = playerWhite; }
     public Player getPlayerBlack() { return playerBlack; }
     public void setPlayerBlack(Player playerBlack) { this.playerBlack = playerBlack; }
-    public Player getWinnerId() { return winnerId; }
-    public void setWinnerId(Player winnerId) { this.winnerId = winnerId; }
+    public Player getWinner() { return winner; }
+    public void setWinner(Player winner) { this.winner = winner; }
     public String getResult() { return result; }
     public void setResult(String result) { this.result = result; }
     public String getMoves() { return moves; }

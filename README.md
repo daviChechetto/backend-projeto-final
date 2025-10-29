@@ -64,7 +64,7 @@ Representa uma partida de xadrez entre dois jogadores.
 | `id` | int | Identificador único |
 | `playerWhiteId` | int | ID do jogador das peças brancas |
 | `playerBlackId` | int | ID do jogador das peças pretas |
-| `winnerId` | int (nullable) | ID do vencedor (ou null em caso de empate) |
+| `winner` | int (nullable) | ID do vencedor (ou null em caso de empate) |
 | `result` | string | Resultado (`white`, `black`, `draw`) |
 | `moves` | text | Registro dos movimentos (PGN simplificado) |
 | `createdAt` | datetime | Data de início |

@@ -1,8 +1,10 @@
 package com.chessapi.dto;
 
+import java.util.UUID;
+
 public class MatchCreateDTO {
-    public Long playerWhiteId;
-    public Long playerBlackId;
+    public UUID playerWhiteId;
+    public UUID playerBlackId;
     public String moves;
-    public Long tournamentId; // optional
+    public UUID tournamentId; // optional
 }
