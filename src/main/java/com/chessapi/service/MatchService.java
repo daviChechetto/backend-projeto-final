@@ -8,7 +8,6 @@ import com.chessapi.repository.MatchRepository;
 import com.chessapi.repository.PlayerRepository;
 import com.chessapi.repository.TournamentRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -18,111 +17,109 @@ import java.util.UUID;
 @Service
 public class MatchService {
 
-    private final MatchRepository matchRepo;
-    private final PlayerRepository playerRepo;
-    private final TournamentRepository tournamentRepo;
+    private final MatchRepository matchRepository;
+    private final PlayerRepository playerRepository;
+    private final TournamentRepository tournamentRepository;
 
-    public MatchService(MatchRepository matchRepo, PlayerRepository playerRepo, TournamentRepository tournamentRepo) {
-        this.matchRepo = matchRepo;
-        this.playerRepo = playerRepo;
-        this.tournamentRepo = tournamentRepo;
+    public MatchService(
+            MatchRepository matchRepository,
+            PlayerRepository playerRepository,
+            TournamentRepository tournamentRepository
+    ) {
+        this.matchRepository = matchRepository;
+        this.playerRepository = playerRepository;
+        this.tournamentRepository = tournamentRepository;
     }
 
     public List<Match> listAll(String result, String orderBy) {
-        List<Match> matches = matchRepo.findAll();
+        List<Match> matches;
 
-        if (result != null) {
-            matches = matches.stream()
-                    .filter(m -> result.equalsIgnoreCase(m.getResult()))
-                    .toList();
+        if (result != null && !result.isBlank()) {
+            matches = matchRepository.findByResult(result);
+        } else {
+            matches = matchRepository.findAll();
         }
 
-        if ("createdAt".equalsIgnoreCase(orderBy)) {
-            matches = matches.stream()
-                    .sorted(Comparator.comparing(Match::getCreatedAt))
-                    .toList();
-        } else if ("updatedAt".equalsIgnoreCase(orderBy)) {
-            matches = matches.stream()
-                    .sorted(Comparator.comparing(Match::getUpdatedAt))
-                    .toList();
+        if (orderBy != null) {
+            switch (orderBy) {
+                case "createdAt" -> matches.sort(Comparator.comparing(Match::getCreatedAt));
+                case "updatedAt" -> matches.sort(Comparator.comparing(Match::getUpdatedAt));
+                case "result" -> matches.sort(Comparator.comparing(Match::getResult));
+            }
         }
 
         return matches;
     }
 
-    @Transactional
+    public Match getById(UUID id) {
+        return matchRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Partida não encontrada com ID: " + id));
+    }
+
     public Match create(MatchDTO dto) {
-        Player white = playerRepo.findById(dto.playerWhiteId)
-                .orElseThrow(() -> new RuntimeException("Jogador branco não encontrado"));
-        Player black = playerRepo.findById(dto.playerBlackId)
-                .orElseThrow(() -> new RuntimeException("Jogador preto não encontrado"));
+        Player white = playerRepository.findById(dto.playerWhiteId)
+                .orElseThrow(() -> new RuntimeException("Jogador branco não encontrado."));
+        Player black = playerRepository.findById(dto.playerBlackId)
+                .orElseThrow(() -> new RuntimeException("Jogador preto não encontrado."));
 
-        Match match = new Match(white, black, dto.moves);
-
+        Tournament tournament = null;
         if (dto.tournamentId != null) {
-            Tournament t = tournamentRepo.findById(dto.tournamentId)
-                    .orElseThrow(() -> new RuntimeException("Torneio não encontrado"));
-            match.setTournament(t);
+            tournament = tournamentRepository.findById(dto.tournamentId)
+                    .orElseThrow(() -> new RuntimeException("Torneio não encontrado."));
         }
 
-        return matchRepo.save(match);
+        Match match = new Match();
+        match.setPlayerWhite(white);
+        match.setPlayerBlack(black);
+        match.setTournament(tournament);
+        match.setMoves(dto.moves);
+        match.setResult(dto.result != null ? dto.result : "ongoing");
+        match.setCreatedAt(LocalDateTime.now());
+        match.setUpdatedAt(LocalDateTime.now());
+
+        return matchRepository.save(match);
     }
 
-    public Match getById(UUID id) {
-        return matchRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Partida não encontrada"));
-    }
-
-    @Transactional
     public Match update(UUID id, MatchDTO dto) {
         Match match = getById(id);
 
-        if (dto.result != null && !List.of("white", "black", "draw").contains(dto.result))
-            throw new RuntimeException("Resultado inválido");
+        if (dto.playerWhiteId != null) {
+            Player white = playerRepository.findById(dto.playerWhiteId)
+                    .orElseThrow(() -> new RuntimeException("Jogador branco não encontrado."));
+            match.setPlayerWhite(white);
+        }
 
-        if (dto.moves != null)
-            match.setMoves(dto.moves);
+        if (dto.playerBlackId != null) {
+            Player black = playerRepository.findById(dto.playerBlackId)
+                    .orElseThrow(() -> new RuntimeException("Jogador preto não encontrado."));
+            match.setPlayerBlack(black);
+        }
+
+        if (dto.tournamentId != null) {
+            Tournament tournament = tournamentRepository.findById(dto.tournamentId)
+                    .orElseThrow(() -> new RuntimeException("Torneio não encontrado."));
+            match.setTournament(tournament);
+        }
+
+        if (dto.moves != null) match.setMoves(dto.moves);
+        if (dto.result != null) match.setResult(dto.result);
 
         if (dto.result != null) {
-            match.setResult(dto.result);
-            applyEloChange(match, dto.result);
+            switch (dto.result) {
+                case "white" -> match.setWinner(match.getPlayerWhite());
+                case "black" -> match.setWinner(match.getPlayerBlack());
+                default -> match.setWinner(null);
+            }
         }
 
         match.setUpdatedAt(LocalDateTime.now());
-        return matchRepo.save(match);
-    }
-
-    private void applyEloChange(Match match, String result) {
-        Player white = match.getPlayerWhite();
-        Player black = match.getPlayerBlack();
-
-        double Rw = Math.pow(10, white.getElo() / 400.0);
-        double Rb = Math.pow(10, black.getElo() / 400.0);
-        double Ew = Rw / (Rw + Rb);
-        double Eb = Rb / (Rw + Rb);
-
-        double Sw = switch (result) {
-            case "white" -> 1;
-            case "black" -> 0;
-            default -> 0.5;
-        };
-        double Sb = 1 - Sw;
-
-        if ("white".equals(result)) match.setWinner(white);
-        else if ("black".equals(result)) match.setWinner(black);
-        else match.setWinner(null);
-
-        int K = 20;
-        white.setElo((int) Math.round(white.getElo() + K * (Sw - Ew)));
-        black.setElo((int) Math.round(black.getElo() + K * (Sb - Eb)));
-
-        playerRepo.save(white);
-        playerRepo.save(black);
+        return matchRepository.save(match);
     }
 
     public void delete(UUID id) {
-        if (!matchRepo.existsById(id))
-            throw new RuntimeException("Partida não encontrada");
-        matchRepo.deleteById(id);
+        if (!matchRepository.existsById(id)) {
+            throw new RuntimeException("Partida não encontrada para exclusão.");
+        }
+        matchRepository.deleteById(id);
     }
 }

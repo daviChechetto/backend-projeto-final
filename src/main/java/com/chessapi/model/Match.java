@@ -1,5 +1,6 @@
 package com.chessapi.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -35,6 +36,7 @@ public class Match {
 
     @ManyToOne
     @JoinColumn(name = "tournament_id")
+    @JsonIgnore
     private Tournament tournament;
 
     public Match() {}

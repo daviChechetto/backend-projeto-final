@@ -1,7 +1,7 @@
 package com.chessapi.dto;
 
-import java.util.UUID;
 import java.util.List;
+import java.util.UUID;
 
 public class MatchDTO {
     public UUID playerWhiteId;
