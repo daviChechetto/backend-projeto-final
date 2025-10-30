@@ -1,5 +1,6 @@
 package com.chessapi.controller;
 
+import com.chessapi.dto.PlayerDTO;
 import com.chessapi.model.Player;
 import com.chessapi.service.PlayerService;
 import org.springframework.http.ResponseEntity;
@@ -30,10 +31,14 @@ public class PlayerController {
     }
 
     @PostMapping
-    public Player create(@RequestBody Player p) { return svc.create(p); }
+    public Player create(@RequestBody PlayerDTO dto) {
+        return svc.create(dto.id, dto.name, dto.email, dto.elo, dto.country);
+    }
 
     @PutMapping("/{id}")
-    public Player update(@PathVariable UUID id, @RequestBody Player updates) { return svc.update(id, updates); }
+    public Player update(@PathVariable UUID id, @RequestBody PlayerDTO dto) {
+        return svc.update(id, dto.id, dto.name, dto.email, dto.elo, dto.country);
+    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
