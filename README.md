@@ -18,22 +18,6 @@ O objetivo é fornecer uma estrutura sólida e escalável que possa ser utilizad
 
 ---
 
-## ⚙️ Principais Funcionalidades da API
-
-| Tipo | Funcionalidade | Descrição |
-|------|----------------|------------|
-| **Autenticação** | Registro e login de jogadores | Criação de conta, login com JWT e gerenciamento de sessões seguras. |
-| **Gerenciamento de Jogadores** | CRUD completo de jogadores | Cadastrar, listar, atualizar e excluir perfis de jogadores. |
-| **Partidas** | Registro e acompanhamento de partidas | Criação de partidas, registro de movimentos e definição do vencedor. |
-| **Histórico** | Consultar partidas anteriores | Listagem com filtros por jogador, resultado e data. |
-| **Ranking** | Cálculo automático de pontuação ELO | Atualização automática do ranking a cada término de partida. |
-| **Filtros e Paginação** | GET com filtros dinâmicos e paginação | Filtragem por nome, país, data e pontuação, com suporte a paginação. |
-| **Ordenação** | Ordenação por data, ELO ou número de vitórias | Parâmetro `?sortBy=` disponível em listagens. |
-| **DTOs e Validação** | Controle e validação de dados de entrada | Garantia de segurança e consistência na criação/edição de registros. |
-| **Relatórios (Extra Futuro)** | Relatório de desempenho por jogador | Retorna estatísticas agregadas (vitórias, derrotas, empates). |
-
----
-
 ## 🧩 Modelos (Entidades)
 
 A API possuirá **três entidades principais** com relacionamento entre si:
