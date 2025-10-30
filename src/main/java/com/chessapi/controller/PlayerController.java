@@ -1,6 +1,5 @@
 package com.chessapi.controller;
 
-import com.chessapi.dto.PlayerDTO;
 import com.chessapi.dto.PlayerRequestDTO;
 import com.chessapi.dto.PlayerResponseDTO;
 import com.chessapi.model.Player;

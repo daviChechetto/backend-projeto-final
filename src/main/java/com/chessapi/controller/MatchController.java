@@ -1,7 +1,6 @@
 package com.chessapi.controller;
 
-import com.chessapi.dto.MatchCreateDTO;
-import com.chessapi.dto.MatchUpdateDTO;
+import com.chessapi.dto.MatchDTO;
 import com.chessapi.model.Match;
 import com.chessapi.service.MatchService;
 import org.springframework.web.bind.annotation.*;
@@ -14,24 +13,36 @@ import java.util.UUID;
 public class MatchController {
 
     private final MatchService svc;
-    public MatchController(MatchService svc) { this.svc = svc; }
+
+    public MatchController(MatchService svc) {
+        this.svc = svc;
+    }
 
     @GetMapping
-    public List<Match> list() { return svc.listAll(); }
+    public List<Match> list(
+            @RequestParam(required = false) String result,
+            @RequestParam(required = false) String orderBy
+    ) {
+        return svc.listAll(result, orderBy);
+    }
 
     @GetMapping("/{id}")
-    public Match get(@PathVariable UUID id) { return svc.getById(id); }
+    public Match get(@PathVariable UUID id) {
+        return svc.getById(id);
+    }
 
     @PostMapping
-    public Match create(@RequestBody MatchCreateDTO dto) {
-        return svc.create(dto.playerWhiteId, dto.playerBlackId, dto.moves, dto.tournamentId);
+    public Match create(@RequestBody MatchDTO dto) {
+        return svc.create(dto);
     }
 
     @PutMapping("/{id}")
-    public Match updateResult(@PathVariable UUID id, @RequestBody MatchUpdateDTO dto) {
-        return svc.updateResult(id, dto.result, dto.moves);
+    public Match update(@PathVariable UUID id, @RequestBody MatchDTO dto) {
+        return svc.update(id, dto);
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable UUID id) { svc.delete(id); }
+    public void delete(@PathVariable UUID id) {
+        svc.delete(id);
+    }
 }

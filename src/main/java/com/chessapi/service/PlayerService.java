@@ -1,6 +1,5 @@
 package com.chessapi.service;
 
-import com.chessapi.dto.PlayerDTO;
 import com.chessapi.dto.PlayerRequestDTO;
 import com.chessapi.model.Player;
 import com.chessapi.repository.PlayerRepository;

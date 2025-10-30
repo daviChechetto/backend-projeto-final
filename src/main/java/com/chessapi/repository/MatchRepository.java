@@ -9,5 +9,5 @@ import java.util.UUID;
 
 @Repository
 public interface MatchRepository extends JpaRepository<Match, UUID> {
-    List<Match> findByPlayerWhiteIdOrPlayerBlackId(Long whiteId, Long blackId);
+    List<Match> findByPlayerWhiteIdOrPlayerBlackId(UUID whiteId, UUID blackId);
 }
