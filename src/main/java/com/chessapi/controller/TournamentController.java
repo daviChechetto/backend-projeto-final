@@ -28,7 +28,7 @@ public class TournamentController {
 
     @PutMapping("/{id}")
     public Tournament update(@PathVariable UUID id, @RequestBody TournamentDTO dto) {
-        return svc.update(id, dto.id, dto.name, dto.location, dto.startDate, dto.endDate);
+        return svc.update(id, dto.name, dto.location, dto.startDate, dto.endDate);
     }
 
     @DeleteMapping("/{id}")
