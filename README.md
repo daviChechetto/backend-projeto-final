@@ -104,12 +104,6 @@ Player (1) ───< Match >───(1) Player
 
 ## 🧭 Estrutura Planejada de Rotas (exemplos)
 
-### 🔐 Autenticação
-| Método | Rota | Descrição |
-|--------|------|------------|
-| POST | `/auth/register` | Cadastrar novo jogador |
-| POST | `/auth/login` | Autenticar e gerar token JWT |
-
 ---
 
 ### 🧍 Jogadores
