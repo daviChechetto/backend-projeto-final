@@ -38,7 +38,6 @@ Permite cadastro de jogadores, controle de partidas, atualização de PGN, organ
 | **POST** | `/matches` | Criar partida (jogadores devem estar ativos e disponíveis) | `MatchCreateDto` |
 | **GET** | `/matches` | Listar partidas | — |
 | **GET** | `/matches/{id}` | Consultar partida | — |
-| **PATCH** | `/matches/{id}/start` | Iniciar partida | — |
 | **PATCH** | `/matches/{id}/pgn` | Atualizar PGN (se não finalizada) | `MatchPgnDto` |
 | **PATCH** | `/matches/{id}/finish` | Finalizar partida (rating não muda se for de torneio) | `MatchFinishDto` |
 | **DELETE** | `/matches/{id}` | Cancelar partida não finalizada | — |
