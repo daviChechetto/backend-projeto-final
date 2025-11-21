@@ -66,11 +66,9 @@ Permite cadastro de jogadores, controle de partidas, atualização de PGN, organ
 - Jogadores não podem estar envolvidos simultaneamente em mais de uma partida ativa.  
 - Jogadores inativos não podem participar de partidas nem administrar torneios.  
 - Partidas de torneio não geram alteração no rating dos jogadores.  
-- Partidas só podem ser criadas em torneios com status **ONGOING**.  
+- Partidas de torneio só podem ser criadas em torneios com status **ONGOING**.  
 - Torneios só podem ser iniciados com **mínimo de 3 participantes** ativos.  
 - Torneios só podem ser finalizados se estiverem **ONGOING** e o vencedor informado for um jogador inscrito.
-
-```
 
 ---
 
