@@ -12,9 +12,7 @@ Permite cadastro de jogadores, controle de partidas, atualização de PGN, organ
   - [Matches](#-matches)  
   - [Tournaments](#-tournaments)  
 - [Regras de Negócio](#-regras-de-negócio)  
-- [DTOs](#-dtos-exemplos)  
 - [Observações Técnicas](#-observações-técnicas)  
-- [Perguntas Pendentes](#-perguntas-pendentes)
 
 ---
 
@@ -57,7 +55,7 @@ Permite cadastro de jogadores, controle de partidas, atualização de PGN, organ
 | **GET** | `/tournaments/{id}` | Consultar torneio | — |
 | **PATCH** | `/tournaments/{id}/join` | Inscrever jogador (status: PLANNED) | `playerId` (query) |
 | **PATCH** | `/tournaments/{id}/start` | Iniciar torneio (mínimo de 3 inscritos) | — |
-| **PATCH** | `/tournaments/{id}/finish` | Finalizar torneio (deve estar ONGOING e winnerId deve ser inscrito) | `winnerId` (query) |
+| **PATCH** | `/tournaments/{id}/finish` | Finalizar torneio (deve estar ONGOING e winnerId deve ser inscrito) | `TournamentFinishDto` |
 | **GET** | `/tournaments/{id}/matches` | Listar partidas vinculadas a um torneio | — |
 | **DELETE** | `/tournaments/{id}` | Excluir torneio (somente se sem participantes) | — |
 
@@ -72,37 +70,16 @@ Permite cadastro de jogadores, controle de partidas, atualização de PGN, organ
 - Torneios só podem ser iniciados com **mínimo de 3 participantes** ativos.  
 - Torneios só podem ser finalizados se estiverem **ONGOING** e o vencedor informado for um jogador inscrito.
 
----
-
-## 📂 DTOs (exemplos)
-
-### PlayerCreateDto
-```json
-{
-  "name": "Igor",
-  "rating": 1200
-}
 ```
 
 ---
 
 ## ⚙️ Observações Técnicas
 
-- IDs utilizam **UUID**.  
+- IDs utilizam **UUID**.
 - Arquitetura recomendada: **Spring Boot + Spring Web + JPA + Validation**.  
 - Repositórios com Spring Data JPA.  
 - Tratamento de erros via exceções customizadas e `@ControllerAdvice`.  
 - Classes separadas em camadas (`controller`, `service`, `repository`, `model`, `dto` etc.).  
-- Suporte opcional: CORS, paginação e ordenação.
 
 ---
-
-## ❓ Perguntas Pendentes
-
-1. Deseja incluir instruções de instalação e execução?  
-2. Qual banco de dados será utilizado?  
-3. Incluir exemplos de respostas da API?  
-4. A API terá autenticação?  
-5. Deseja diagrama UML simples?  
-6. Há regras adicionais de rating?  
-7. Deseja incluir a seção “Tecnologias usadas”?
