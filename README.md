@@ -1,159 +1,108 @@
-## 🧩 Projeto Final - API REST  
-### Tema: ♟️ Xadrez Inteligente (Chess API)  
----
+# ♟️ Chess API
 
-## 👥 Integrantes
-- **Brendon Córdova**  
-- **Ígor da Silva Antunes**  
-- **Davi Chechetto Westphal**
+API REST desenvolvida para gerenciamento completo de jogadores, partidas e torneios de xadrez.  
+Permite cadastro de jogadores, controle de partidas, atualização de PGN, organização de torneios e aplicação de regras de negócio específicas do domínio enxadrístico.
 
 ---
 
-## 🧠 Visão Geral do Projeto
+## 📑 Sumário
 
-O **Chess API** é um sistema backend RESTful projetado para gerenciar partidas, jogadores e rankings de xadrez.  
-A API permitirá o registro e acompanhamento de partidas, controle de usuários, histórico de movimentos e cálculo automático de pontuação.
-
-O objetivo é fornecer uma estrutura sólida e escalável que possa ser utilizada por sites, aplicativos ou plataformas que gerenciam torneios e jogos de xadrez.
-
----
-
-## Ideias de melhorias
-
-| Tipo | Funcionalidade | Descrição |
-|------|----------------|------------|
-| **Gerenciamento de Jogadores** | CRUD completo de jogadores | Cadastrar, listar, atualizar e excluir perfis de jogadores. |
-| **Partidas** | Registro e acompanhamento de partidas | Criação de partidas, registro de movimentos e definição do vencedor. |
-| **Histórico** | Consultar partidas anteriores | Listagem com filtros por jogador, resultado e data. |
-| **Ranking** | Cálculo automático de pontuação ELO | Atualização automática do ranking a cada término de partida. |
-| **Filtros e Paginação** | GET com filtros dinâmicos e paginação | Filtragem por nome, país, data e pontuação, com suporte a paginação. |
-| **Ordenação** | Ordenação por data, ELO ou número de vitórias | Parâmetro ?sortBy= disponível em listagens. |
-| **DTOs e Validação** | Controle e validação de dados de entrada | Garantia de segurança e consistência na criação/edição de registros. |
-| **Relatórios (Extra Futuro)** | Relatório de desempenho por jogador | Retorna estatísticas agregadas (vitórias, derrotas, empates). |
+- [Endpoints](#-endpoints)  
+  - [Players](#-players)  
+  - [Matches](#-matches)  
+  - [Tournaments](#-tournaments)  
+- [Regras de Negócio](#-regras-de-negócio)  
+- [DTOs](#-dtos-exemplos)  
+- [Observações Técnicas](#-observações-técnicas)  
+- [Perguntas Pendentes](#-perguntas-pendentes)
 
 ---
 
-## 🧩 Modelos (Entidades)
+## 🚀 Endpoints
 
-A API possuirá **três entidades principais** com relacionamento entre si:
+### 👤 Players
 
-### 1. **Player (Jogador)**  
-Representa um jogador cadastrado no sistema.
-
-| Campo | Tipo | Descrição |
-|--------|------|------------|
-| `id` | UUID | Identificador único do jogador |
-| `name` | string | Nome completo |
-| `email` | string | Email único para login |
-| `password` | string | Senha criptografada |
-| `elo` | int | Pontuação ELO atual |
-| `country` | string | País de origem |
-| `createdAt` | datetime | Data de cadastro |
-
-**Relacionamentos:**  
-- `Player` (1:N) `Match` → um jogador pode participar de várias partidas.  
+| Método | Rota | Descrição | Corpo/Parâmetros |
+|--------|-------|------------|------------------|
+| **POST** | `/players` | Criar jogador | `PlayerCreateDto` |
+| **GET** | `/players` | Listar jogadores | — |
+| **GET** | `/players/{id}` | Consultar jogador | — |
+| **PATCH** | `/players/{id}` | Atualizar dados básicos | `PlayerUpdateDto` |
+| **PATCH** | `/players/{id}/activate` | Ativar jogador | — |
+| **PATCH** | `/players/{id}/deactivate` | Desativar jogador | — |
 
 ---
 
-### 2. **Match (Partida)**  
-Representa uma partida de xadrez entre dois jogadores.
+### 🎲 Matches
 
-| Campo | Tipo | Descrição |
-|--------|------|------------|
-| `id` | UUID | Identificador único |
-| `playerWhiteId` | int | ID do jogador das peças brancas |
-| `playerBlackId` | int | ID do jogador das peças pretas |
-| `winner` | int (nullable) | ID do vencedor (ou null em caso de empate) |
-| `result` | string | Resultado (`white`, `black`, `draw`) |
-| `moves` | text | Registro dos movimentos (PGN simplificado) |
-| `createdAt` | datetime | Data de início |
-| `updatedAt` | datetime | Última atualização |
-
-**Relacionamentos:**  
-- `Match` (N:1) `Player` → cada partida envolve dois jogadores.  
+| Método | Rota | Descrição | Corpo/Parâmetros |
+|--------|-------|------------|------------------|
+| **POST** | `/matches` | Criar partida (jogadores devem estar ativos e disponíveis) | `MatchCreateDto` |
+| **GET** | `/matches` | Listar partidas | — |
+| **GET** | `/matches/{id}` | Consultar partida | — |
+| **PATCH** | `/matches/{id}/start` | Iniciar partida | — |
+| **PATCH** | `/matches/{id}/pgn` | Atualizar PGN (se não finalizada) | `MatchPgnDto` |
+| **PATCH** | `/matches/{id}/finish` | Finalizar partida (rating não muda se for de torneio) | `MatchFinishDto` |
+| **DELETE** | `/matches/{id}` | Cancelar partida não finalizada | — |
+| **GET** | `/matches/player/{id}` | Histórico de partidas por jogador | — |
 
 ---
 
-### 3. **Tournament (Torneio)**  
-Representa torneios de xadrez compostos por várias partidas.
+### 🏆 Tournaments
 
-| Campo | Tipo | Descrição |
-|--------|------|------------|
-| `id` | UUID | Identificador único do torneio |
-| `name` | string | Nome do torneio |
-| `location` | string | Local ou plataforma |
-| `startDate` | date | Data de início |
-| `endDate` | date | Data de término |
-| `matches` | array | Lista de partidas associadas |
-
-**Relacionamentos:**  
-- `Tournament` (1:N) `Match` → um torneio contém várias partidas.  
+| Método | Rota | Descrição | Corpo/Parâmetros |
+|--------|-------|------------|------------------|
+| **POST** | `/tournaments` | Criar torneio (owner deve estar ativo) | `TournamentCreateDto` |
+| **GET** | `/tournaments` | Listar torneios | — |
+| **GET** | `/tournaments/{id}` | Consultar torneio | — |
+| **PATCH** | `/tournaments/{id}/join` | Inscrever jogador (status: PLANNED) | `playerId` (query) |
+| **PATCH** | `/tournaments/{id}/start` | Iniciar torneio (mínimo de 3 inscritos) | — |
+| **PATCH** | `/tournaments/{id}/finish` | Finalizar torneio (deve estar ONGOING e winnerId deve ser inscrito) | `winnerId` (query) |
+| **GET** | `/tournaments/{id}/matches` | Listar partidas vinculadas a um torneio | — |
+| **DELETE** | `/tournaments/{id}` | Excluir torneio (somente se sem participantes) | — |
 
 ---
 
-## 🔁 Relacionamentos entre Entidades
-```
-Player (1) ───< Match >───(1) Player
-                 │
-                 ▼
-            Tournament (1)
+## 📌 Regras de Negócio
+
+- Jogadores não podem estar envolvidos simultaneamente em mais de uma partida ativa.  
+- Jogadores inativos não podem participar de partidas nem administrar torneios.  
+- Partidas de torneio não geram alteração no rating dos jogadores.  
+- Partidas só podem ser criadas em torneios com status **ONGOING**.  
+- Torneios só podem ser iniciados com **mínimo de 3 participantes** ativos.  
+- Torneios só podem ser finalizados se estiverem **ONGOING** e o vencedor informado for um jogador inscrito.
+
+---
+
+## 📂 DTOs (exemplos)
+
+### PlayerCreateDto
+```json
+{
+  "name": "Igor",
+  "rating": 1200
+}
 ```
 
 ---
 
-## 🧭 Estrutura Planejada de Rotas (exemplos)
+## ⚙️ Observações Técnicas
+
+- IDs utilizam **UUID**.  
+- Arquitetura recomendada: **Spring Boot + Spring Web + JPA + Validation**.  
+- Repositórios com Spring Data JPA.  
+- Tratamento de erros via exceções customizadas e `@ControllerAdvice`.  
+- Classes separadas em camadas (`controller`, `service`, `repository`, `model`, `dto` etc.).  
+- Suporte opcional: CORS, paginação e ordenação.
 
 ---
 
-### 🧍 Jogadores
-| Método | Rota | Descrição |
-|--------|------|------------|
-| GET | `/players` | Listar todos os jogadores (com paginação e filtros) |
-| GET | `/players/:id` | Buscar jogador específico |
-| POST | `/players` | Criar novo jogador |
-| PUT | `/players/:id` | Atualizar informações do jogador |
-| DELETE | `/players/:id` | Excluir jogador |
+## ❓ Perguntas Pendentes
 
----
-
-### ♟️ Partidas
-| Método | Rota | Descrição |
-|--------|------|------------|
-| GET | `/matches` | Listar partidas com filtros e ordenação |
-| GET | `/matches/:id` | Buscar detalhes de uma partida |
-| POST | `/matches` | Criar nova partida |
-| PUT | `/matches/:id` | Atualizar resultado/movimentos |
-| DELETE | `/matches/:id` | Excluir partida (caso necessário) |
-
----
-
-### 🏆 Torneios
-| Método | Rota | Descrição |
-|--------|------|------------|
-| GET | `/tournaments` | Listar torneios cadastrados |
-| GET | `/tournaments/:id` | Buscar detalhes de um torneio |
-| POST | `/tournaments` | Criar novo torneio |
-| PUT | `/tournaments/:id` | Atualizar informações do torneio |
-| DELETE | `/tournaments/:id` | Excluir torneio |
-
----
-
-## 🧩 Próximos Passos (Entrega 03)
-- Implementar relacionamentos entre entidades (Player ↔ Match ↔ Tournament);  
-- Adicionar paginação e ordenação nas rotas GET ALL;  
-- Criar DTOs para entrada e saída de dados;  
-- Adicionar filtros de busca por parâmetros;  
-
----
-
-## 📚 Observações
-Esta entrega documenta **as principais funcionalidades e modelos da API**, conforme solicitado.  
-Na próxima etapa, será apresentada a **arquitetura REST detalhada** com rotas, verbos HTTP e códigos de resposta.
-
-
-### 📅 Entrega 01
-> Repositório Git com README.md contendo o **tema** e os **nomes dos integrantes**.  
-> Tema escolhido: **Xadrez Inteligente (Chess API)** ✅
-
-### 📅 Entrega 02
-> Documentação das Funcionalidades e Modelos  
+1. Deseja incluir instruções de instalação e execução?  
+2. Qual banco de dados será utilizado?  
+3. Incluir exemplos de respostas da API?  
+4. A API terá autenticação?  
+5. Deseja diagrama UML simples?  
+6. Há regras adicionais de rating?  
+7. Deseja incluir a seção “Tecnologias usadas”?
