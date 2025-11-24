@@ -8,11 +8,12 @@ Permite cadastro de jogadores, controle de partidas, atualização de PGN, organ
 ## 📑 Sumário
 
 - [Endpoints](#-endpoints)  
-  - [Players](#-players)  
-  - [Matches](#-matches)  
-  - [Tournaments](#-tournaments)  
-- [Regras de Negócio](#-regras-de-negócio)  
-- [Observações Técnicas](#-observações-técnicas)  
+- [Players](#-players)  
+- [Matches](#-matches)  
+- [Tournaments](#-tournaments)  
+- [Regras de Negócio](#-regras-de-negocio)  
+- [Observações Técnicas](#-observações-tecnicas)
+- [Como executar o projeto localmente](#como-executar-o-projeto-localmente)
 
 ---
 
@@ -80,3 +81,46 @@ Permite cadastro de jogadores, controle de partidas, atualização de PGN, organ
 - Classes separadas em camadas (`controller`, `service`, `repository`, `model`, `dto` etc.).  
 
 ---
+
+## Como executar o projeto localmente
+
+Para rodar esta API, é necessário ter Redis em execução. A aplicação depende dele para gerenciar o cache de consultas.
+
+### Pré-requisitos
+
+- Java 17+
+- Maven
+- Docker Desktop instalado e em execução
+- Porta 8080 livre para a API
+- Porta 6379 livre para o Redis
+
+### 1. Inicie o Redis usando Docker
+
+Com o Docker aberto, execute no terminal:
+
+```bash
+docker run --name redis-cache -p 6379:6379 -d redis
+```
+Isso cria e inicia um servidor Redis local na porta 6379.
+
+### 2. Clone o repositório
+
+```bash
+git clone https://github.com/daviChechetto/backend-projeto-final
+```
+
+### 3. Execute a API
+
+```bash
+mvn spring-boot:run
+```
+A API iniciará em: http://localhost:8080 e com o Redis rodando, o sistema ativa automaticamente o cache para os endpoints configurados.
+
+## Para limpar o cache
+
+No terminal digite:
+```bash
+docker exec -it redis-cache redis-cli
+FLUSHALL
+exit
+```
