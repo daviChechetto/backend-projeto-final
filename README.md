@@ -106,8 +106,7 @@ Isso cria e inicia um servidor Redis local na porta 6379.
 ### 2. Clone o repositório
 
 ```bash
-git clone https://github.com/seu-usuario/seu-repo.git
-cd seu-repo
+git clone https://github.com/daviChechetto/backend-projeto-final
 ```
 
 ### 3. Execute a API
