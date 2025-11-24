@@ -7,6 +7,8 @@ import com.example.chessapi.model.Player;
 import com.example.chessapi.repository.PlayerRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +18,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@EnableCaching
 @RequiredArgsConstructor
 public class PlayerService {
     private final PlayerRepository playerRepo;
@@ -40,8 +43,9 @@ public class PlayerService {
         return playerRepo.save(p);
     }
 
+    @Cacheable("players")
     public Player get(UUID id) {
-        return playerRepo.findById(id).orElseThrow(() -> new EntityNotFoundException("Player not found"));
+        return playerRepo.findById(id).orElseThrow (() -> new EntityNotFoundException("Player not found"));
     }
 
     public List<Player> list() { return playerRepo.findAll(); }
