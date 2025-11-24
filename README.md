@@ -116,3 +116,12 @@ cd seu-repo
 mvn spring-boot:run
 ```
 A API iniciará em: http://localhost:8080 e com o Redis rodando, o sistema ativa automaticamente o cache para os endpoints configurados.
+
+## Para limpar o cache
+
+No terminal digite:
+```bash
+docker exec -it redis-cache redis-cli
+FLUSHALL
+exit
+```
