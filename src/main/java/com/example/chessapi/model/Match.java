@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -11,7 +12,7 @@ import java.util.UUID;
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor @Builder
 @Table(name = "matches")
-public class Match {
+public class Match implements Serializable {
     public enum Result { WHITE_WIN, BLACK_WIN, DRAW }
 
     @Id

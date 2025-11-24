@@ -10,8 +10,10 @@ import com.example.chessapi.repository.MatchRepository;
 import com.example.chessapi.repository.PlayerRepository;
 import com.example.chessapi.repository.TournamentRepository;
 import com.example.chessapi.util.EloCalculator;
+import com.example.chessapi.util.LatencySimulator;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -72,8 +74,9 @@ public class MatchService {
                 .build();
         return matchRepo.save(m);
     }
-
+    @Cacheable("matches")
     public Match get(UUID id) {
+        LatencySimulator.delay(5000);
         return matchRepo.findById(id).orElseThrow(() -> new EntityNotFoundException("Match not found"));
     }
 
