@@ -106,8 +106,7 @@ Isso cria e inicia um servidor Redis local na porta 6379.
 ### 2. Clone o repositório
 
 ```bash
-git clone https://github.com/seu-usuario/seu-repo.git
-cd seu-repo
+git clone https://github.com/daviChechetto/backend-projeto-final
 ```
 
 ### 3. Execute a API
@@ -116,3 +115,12 @@ cd seu-repo
 mvn spring-boot:run
 ```
 A API iniciará em: http://localhost:8080 e com o Redis rodando, o sistema ativa automaticamente o cache para os endpoints configurados.
+
+## Para limpar o cache
+
+No terminal digite:
+```bash
+docker exec -it redis-cache redis-cli
+FLUSHALL
+exit
+```
