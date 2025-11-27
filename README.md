@@ -14,6 +14,7 @@ Permite cadastro de jogadores, controle de partidas, atualização de PGN, organ
 - [Regras de Negócio](#-regras-de-negocio)  
 - [Observações Técnicas](#-observações-tecnicas)
 - [Como executar o projeto localmente](#como-executar-o-projeto-localmente)
+- Swagger / OpenAPI
 
 ---
 
@@ -79,6 +80,18 @@ Permite cadastro de jogadores, controle de partidas, atualização de PGN, organ
 - Repositórios com Spring Data JPA.  
 - Tratamento de erros via exceções customizadas e `@ControllerAdvice`.  
 - Classes separadas em camadas (`controller`, `service`, `repository`, `model`, `dto` etc.).  
+
+---
+
+## 📘 Swagger / OpenAPI
+
+Após rodar a aplicação:
+
+- **Swagger UI:**  
+  👉 http://localhost:8080/swagger-ui.html
+
+- **OpenAPI JSON:**  
+  👉 http://localhost:8080/v3/api-docs
 
 ---
 
