@@ -2,6 +2,7 @@ package com.example.chessapi.controller;
 
 import com.example.chessapi.dto.PasswordUpdateDto;
 import com.example.chessapi.dto.PlayerCreateDto;
+import com.example.chessapi.dto.PlayerRankingDto;
 import com.example.chessapi.dto.PlayerUpdateDto;
 import com.example.chessapi.model.Match;
 import com.example.chessapi.model.Player;
@@ -9,6 +10,10 @@ import com.example.chessapi.service.MatchService;
 import com.example.chessapi.service.PlayerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +24,7 @@ import java.util.UUID;
 @RequestMapping("/players")
 @RequiredArgsConstructor
 public class PlayerController {
+
     private final PlayerService playerService;
     private final MatchService matchService;
 
@@ -28,10 +34,14 @@ public class PlayerController {
     }
 
     @GetMapping
-    public List<Player> list() { return playerService.list(); }
+    public List<Player> list() {
+        return playerService.list();
+    }
 
     @GetMapping("/{id}")
-    public Player get(@PathVariable UUID id) { return playerService.get(id); }
+    public Player get(@PathVariable UUID id) {
+        return playerService.get(id);
+    }
 
     @PutMapping("/{id}")
     public Player update(@PathVariable UUID id, @Valid @RequestBody PlayerUpdateDto dto) {
@@ -55,8 +65,17 @@ public class PlayerController {
         return matchService.historyForPlayer(id);
     }
 
+    // ✅ SOMENTE leaderboard paginado (não existe mais duplicação)
     @GetMapping("/leaderboard")
-    public List<Player> leaderboard() {
-        return playerService.leaderboard();
+    public Page<Player> leaderboard(
+            @PageableDefault(size = 20, sort = "rating", direction = Sort.Direction.DESC)
+            Pageable pageable
+    ) {
+        return playerService.leaderboard(pageable);
+    }
+
+    @GetMapping("/{id}/rank")
+    public PlayerRankingDto rank(@PathVariable UUID id) {
+        return playerService.getPlayerRank(id);
     }
 }

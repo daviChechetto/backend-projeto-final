@@ -2,6 +2,7 @@ package com.example.chessapi.service;
 
 import com.example.chessapi.dto.PasswordUpdateDto;
 import com.example.chessapi.dto.PlayerCreateDto;
+import com.example.chessapi.dto.PlayerRankingDto;
 import com.example.chessapi.dto.PlayerUpdateDto;
 import com.example.chessapi.model.Player;
 import com.example.chessapi.repository.PlayerRepository;
@@ -10,6 +11,8 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -78,4 +81,15 @@ public class PlayerService {
         p.setActive(false);
         playerRepo.save(p);
     }
+    public Page<Player> leaderboard(Pageable pageable) {
+        return playerRepo.findByActiveTrue(pageable);
+    }
+
+    public PlayerRankingDto getPlayerRank(UUID id) {
+        Player p = get(id);
+        long higher = playerRepo.countByActiveTrueAndRatingGreaterThan(p.getRating());
+        long rank = higher + 1;
+        return new PlayerRankingDto(p.getId(), p.getUsername(), p.getRating(), rank);
+    }
+
 }
