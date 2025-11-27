@@ -7,6 +7,10 @@ import com.example.chessapi.model.Match;
 import com.example.chessapi.service.MatchService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -46,4 +50,13 @@ public class MatchController {
         matchService.cancel(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/player/{id}")
+    public Page<Match> history(
+            @PathVariable UUID id,
+            @PageableDefault(size = 20, sort = "endedAt", direction = Sort.Direction.DESC)
+            Pageable pageable) {
+        return matchService.historyForPlayer(id, pageable);
+    }
+
 }

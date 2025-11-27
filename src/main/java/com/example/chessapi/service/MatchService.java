@@ -14,6 +14,8 @@ import com.example.chessapi.util.LatencySimulator;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -168,4 +170,9 @@ public class MatchService {
     public List<Match> historyForPlayer(UUID playerId) {
         return matchRepo.findByWhitePlayerIdOrBlackPlayerIdOrderByEndedAtDesc(playerId, playerId);
     }
+
+    public Page<Match> historyForPlayer(UUID playerId, Pageable pageable) {
+        return matchRepo.findByWhitePlayerIdOrBlackPlayerId(playerId, playerId, pageable);
+    }
+
 }
